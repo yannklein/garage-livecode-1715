@@ -1,70 +1,89 @@
-// DON'T CHANGE THIS LINE
-window.myBadAssGarage = 'drift-container';
+// DON'T CHANGE THESE LINE
+window.myBadAssGarage = 'dougies-palace';
 if (myBadAssGarage)
   document.querySelector('#garage-name').innerText = myBadAssGarage.replace(
     /-/g,
     ' ',
   );
+// DON'T CHANGE THESE LINE
+
+const url = "https://garage.api.lewagon.com/dougies-palace/cars";
 
 // //////////////////////
 // PSEUDOCODE
 // //////////////////////
-const url = 'https://wagon-garage-api.herokuapp.com/drift-container/cars';
 
 // Get all the cars
-// //////////////////////
-const getCars = () => {
-  // Select class cars-list
-  const cars = document.querySelector('.cars-list');
-  // fetch GET api returns an array
-  fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      // iterate over the array and for each car
-      cars.innerHTML = '';
-      data.forEach((car) => {
-        const carDesc = `
-      <div class="car">
-        <div class="car-image">
-          <img src="http://loremflickr.com/280/280/${car.brand},${car.model}" />
-        </div>
-        <div class="car-info">
-          <h4>${car.brand} ${car.model}</h4>
-          <p><strong>Owner:</strong> ${car.owner}</p>
-          <p><strong>Plate:</strong> ${car.plate}</p>
-        </div>
-      </div>`;
-        // Insert the car into the cars-list
-        cars.insertAdjacentHTML('afterbegin', carDesc);
-      });
-    });
+const carsList = document.querySelector(".cars-list");
+// select the html element where you want to add new cars(carsLIST)
+// fetch the cars from the garage api 
+const getCars = (data) => {
+  console.log(data);
+  carsList.innerHTML = "";
+  data.forEach((car) => {
+    carsList.insertAdjacentHTML("beforeend", `
+        <div class="car">
+          <div class="car-image">
+            <img src="http://loremflickr.com/280/280/${car.brand},${car.model}" />
+          </div>
+          <div class="car-info"
+            <h4>${car.brand} ${car.model}</h4>
+            <p><strong>Owner:</strong> ${car.owner}</p>
+            <p><strong>Plate:</strong> ${car.plate}</p>
+          </div>
+        </div> 
+      `)
+  });
 };
 
-getCars();
+const displayCars = () => {
+  fetch(url)
+    .then (response => response.json())
+    .then ((data) => {getCars(data)});
+}
+// iterate over the cars
+// create the car's card for each car, inserting in the previously selected html elemnt
+displayCars();
+// //////////////////////
+
+
 
 // Add a new car
-// //////////////////////
-const addCar = document.querySelector('#submit-btn');
-
-// add event listener(submit)
-addCar.addEventListener("click", (event) => {
+// //////////////////////TO STORE OUR CAR IN THE API
+// SELECT the values entered, that would be the html elements of input with corresponding ids
+const addCar = (event) => {
   event.preventDefault();
-  // select the inputs from the user
-  const brand = document.querySelector('#brand').value;
-  const model = document.querySelector('#model').value;
-  const plate = document.querySelector('#plate').value;
-  const owner = document.querySelector('#owner').value;
-  const data = { brand, model, plate, owner };
-  // fetch post the user inputs
-  fetch(url, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(data)
+const brand = document.querySelector("#brand").value;
+const model = document.querySelector("#model").value;
+const plate = document.querySelector("#plate").value;
+const owner = document.querySelector("#owner").value;
+
+// const newCar = {
+//   brand: brand,
+//   model: model,
+//   plate: plate,
+//   owner: owner, 
+// }
+
+const newCar = { brand, model, plate, owner }
+
+const options = {
+  method: 'POST',
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(newCar)
+}
+fetch(url, options)
+  .then(response => response.json())
+  .then((data) => {
+    console.log(data)
+    displayCars()
   })
-    .then((response) => response.json())
-    .then(data => {
-      console.log(data);
-      // refresh the cars-list
-      getCars();
-    });
-})
+};
+const submitBtn = document.querySelector("#submit-btn");
+submitBtn.addEventListener("click", addCar);
+
+//ALSO select the add card button
+// step 2 , listen to a click on the button
+// step 3 , fetch with post 
+// in the .then part, console.log for checking what we sent
+// display all the cars 
